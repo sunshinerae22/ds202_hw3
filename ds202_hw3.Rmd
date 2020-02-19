@@ -1,0 +1,72 @@
+---
+title: "Homework3"
+author: "Stephanie Femrite"
+date: "2/13/2020"
+output: html_document
+---
+```{r}
+library(ggplot2)
+data(tips, package="reshape2")
+?tips
+```
+
+```{r}
+numParty <- length(tips$size)
+print(numParty)
+```
+
+```{r}
+str(tips)
+```
+
+It looks like "total_bill" and "tip" are numbers, not integers because they include a decimal point. "sex", "smoker", "day" and "time" are all categorical variables. The only one of them with more than two levels is "day" with four levels. "size" is an integer because it only has whole numbers in each row.
+
+
+```{r}
+tipsPerDay <- tips$day
+day <- table(tipsPerDay)
+print(day) 
+```
+
+
+```{r}
+female5 <- data.frame(tips[tips$sex =='Female' & tips$size >=5,])
+print(female5)
+```
+
+```{r}
+ggplot(tips, aes(x=tips$total_bill, y=tips$tip)) + geom_point(position = 'jitter') + xlab('Total Bill') + ylab('Tips')
+```
+
+It looks like there is a moderately strong positive linear relationship between the total bill and the tip.
+
+
+
+ There is are a few dots where the meal price is about the same (between $45 and $50) but the tip size varies pretty significantly. The second anomaly is from a meal that is under $10 but the tip is significantly higher than the rest of the tips around the same meal price.
+
+```{r}
+tips$tipRate <- tips$tip/tips$total_bill
+head(tips)
+```
+
+```{r}
+lunchFirst<- factor(tips$time, level = c('Lunch','Dinner'))
+ggplot(tips, aes(x = lunchFirst, y=tips$tipRate)) + geom_boxplot()
+```
+
+This boxplot shows the tip rates per time of day. There doesn't seem to be huge differences between lunch and dinner. It looks like there are outliers for dinner. The medians seem to be about the same. For lunch, it looks like most people tip a higher ratio to their bill than during dinner. 
+
+```{r}
+ggplot(tips, aes(x=tips$total_bill, y=tips$tip, color= tips$smoker)) + geom_point() + facet_wrap(~tips$sex)+ xlab('Total Bill') + ylab('Tips')
+```
+
+
+With this visual, the linear relationships become much more pronounced. While women look like they tend to tip less, it looks like the smokers are generally the outliers, paying much more or much less, while the non-smoking women tend to trend in a much more linear fashion. Men also seem to trend in a positive linear fashion with smokers generally being the outliers, though the outliers tend to trend mostly underneath what I where I would expect the regression line to fall.
+
+```{r}
+ggplot(tips, aes(day)) + geom_bar(aes(fill=sex), position='dodge')
+```
+
+
+It looks like he serves fewer people on Friday than any other day. It looks like over the weekend, men are more likely to pay the bill and on Thursdays and Fridays, the gender that pays the bill is just as likely to be a man as a woman.
+
